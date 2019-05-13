@@ -1,7 +1,7 @@
 {
-  "name": "copy_model",
+  "name": "todo-sequelize",
   "version": "1.0.0",
-  "description": "",
+  "description": "todolist",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

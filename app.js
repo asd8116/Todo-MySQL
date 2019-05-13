@@ -7,7 +7,6 @@ const session = require('express-session')
 const passport = require('passport')
 const flash = require('connect-flash')
 const app = express()
-const mongoose = require('mongoose')
 
 // 判別開發環境
 if (process.env.NODE_ENV !== 'production') {
@@ -27,20 +26,6 @@ Handlebars.registerHelper('case', function(value, options) {
   }
 })
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/records', {
-  useNewUrlParser: true,
-  useCreateIndex: true
-})
-const db = mongoose.connection
-
-db.on('error', () => {
-  console.log('mongodb error!')
-})
-
-db.once('open', () => {
-  console.log('mongodb connected!')
-})
-
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 
 app.set('view engine', 'handlebars')
@@ -53,33 +38,37 @@ app.use(methodOverride('_method'))
 
 app.use(flash())
 
-app.use(
-  session({
-    secret: 'kerokero',
-    resave: 'false',
-    saveUninitialized: 'false'
-  })
-)
+// app.use(
+//   session({
+//     secret: 'kerokero',
+//     resave: 'false',
+//     saveUninitialized: 'false'
+//   })
+// )
 
-app.use(passport.initialize())
+// app.use(passport.initialize())
 
-app.use(passport.session())
+// app.use(passport.session())
 
-require('./config/passport')(passport)
+// require('./config/passport')(passport)
 
-app.use((req, res, next) => {
-  res.locals.user = req.user
-  res.locals.isAuthenticated = req.isAuthenticated() // 辨識是否已經登入
-  res.locals.success_msg = req.flash('success_msg')
-  res.locals.warning_msg = req.flash('warning_msg')
-  next()
-})
+// app.use((req, res, next) => {
+//   res.locals.user = req.user
+//   res.locals.isAuthenticated = req.isAuthenticated() // 辨識是否已經登入
+//   res.locals.success_msg = req.flash('success_msg')
+//   res.locals.warning_msg = req.flash('warning_msg')
+//   next()
+// })
 
 // routes
-app.use('/', require('./routes/home'))
-app.use('/rewrites', require('./routes/rewrites'))
-app.use('/users', require('./routes/users'))
-app.use('/auth', require('./routes/auths'))
+// app.use('/', require('./routes/home'))
+// app.use('/rewrites', require('./routes/rewrites'))
+// app.use('/users', require('./routes/users'))
+// app.use('/auth', require('./routes/auths'))
+
+app.get('/', (req, res) => {
+  res.send('hello world')
+})
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('App is running: localhost:3000')
