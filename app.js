@@ -61,14 +61,10 @@ app.use(flash())
 // })
 
 // routes
-// app.use('/', require('./routes/home'))
+app.use('/', require('./routes/home'))
+app.use('/users', require('./routes/users'))
 // app.use('/rewrites', require('./routes/rewrites'))
-// app.use('/users', require('./routes/users'))
 // app.use('/auth', require('./routes/auths'))
-
-app.get('/', (req, res) => {
-  res.send('hello world')
-})
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('App is running: localhost:3000')
