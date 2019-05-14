@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "seeder": "node models/seeds/seeder.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -22,10 +21,13 @@
     "handlebars-helpers": "^0.10.0",
     "method-override": "^3.0.0",
     "mongoose": "^5.5.7",
+    "mysql2": "^1.6.5",
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "sequelize": "^5.8.6",
+    "sequelize-cli": "^5.4.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.0"
