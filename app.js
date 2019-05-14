@@ -7,6 +7,7 @@ const session = require('express-session')
 const passport = require('passport')
 const flash = require('connect-flash')
 const app = express()
+const db = require('./models')
 
 // 判別開發環境
 if (process.env.NODE_ENV !== 'production') {
@@ -67,5 +68,6 @@ app.use('/users', require('./routes/users'))
 // app.use('/auth', require('./routes/auths'))
 
 app.listen(process.env.PORT || 3000, () => {
+  db.sequelize.sync()
   console.log('App is running: localhost:3000')
 })
