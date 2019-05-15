@@ -4,7 +4,7 @@ const db = require('../models')
 const Todo = db.Todo
 
 router.get('/', (req, res) => {
-  res.send('hello world')
+  res.render('index')
 })
 
 module.exports = router

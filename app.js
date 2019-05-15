@@ -64,7 +64,7 @@ app.use(flash())
 // routes
 app.use('/', require('./routes/home'))
 app.use('/users', require('./routes/users'))
-// app.use('/rewrites', require('./routes/rewrites'))
+app.use('/todos', require('./routes/todos'))
 // app.use('/auth', require('./routes/auths'))
 
 app.listen(process.env.PORT || 3000, () => {
