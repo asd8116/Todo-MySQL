@@ -39,27 +39,27 @@ app.use(methodOverride('_method'))
 
 app.use(flash())
 
-// app.use(
-//   session({
-//     secret: 'kerokero',
-//     resave: 'false',
-//     saveUninitialized: 'false'
-//   })
-// )
+app.use(
+  session({
+    secret: 'kerokero',
+    resave: 'false',
+    saveUninitialized: 'false'
+  })
+)
 
-// app.use(passport.initialize())
+app.use(passport.initialize())
 
-// app.use(passport.session())
+app.use(passport.session())
 
-// require('./config/passport')(passport)
+require('./config/passport')(passport)
 
-// app.use((req, res, next) => {
-//   res.locals.user = req.user
-//   res.locals.isAuthenticated = req.isAuthenticated() // 辨識是否已經登入
-//   res.locals.success_msg = req.flash('success_msg')
-//   res.locals.warning_msg = req.flash('warning_msg')
-//   next()
-// })
+app.use((req, res, next) => {
+  res.locals.user = req.user
+  res.locals.isAuthenticated = req.isAuthenticated() // 辨識是否已經登入
+  res.locals.success_msg = req.flash('success_msg')
+  res.locals.warning_msg = req.flash('warning_msg')
+  next()
+})
 
 // routes
 app.use('/', require('./routes/home'))

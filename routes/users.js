@@ -11,8 +11,11 @@ router.get('/login', (req, res) => {
 })
 
 // login
-router.post('/login', (req, res) => {
-  res.send('login')
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/users/login'
+  })(req, res, next)
 })
 
 // register page
@@ -22,16 +25,38 @@ router.get('/register', (req, res) => {
 
 // register
 router.post('/register', (req, res) => {
-  User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password
-  }).then(user => res.redirect('/'))
+  const { name, email, password, password2 } = req.body
+  let errors = []
+
+  if (!name || !email || !password || !password2) {
+    errors.push({ message: '所有欄位都是必填' })
+  }
+  if (password !== password2) {
+    errors.push({ message: '密碼輸入錯誤' })
+  }
+
+  if (errors.length > 0) {
+    res.render('register', {
+      errors,
+      name,
+      email,
+      password,
+      password2
+    })
+  } else {
+    User.create({
+      name,
+      email,
+      password
+    }).then(user => res.redirect('/'))
+  }
 })
 
 // logout
 router.get('/logout', (req, res) => {
-  res.send('logout')
+  req.logout()
+  req.flash('success_msg', '你已經成功登出')
+  res.redirect('/users/login')
 })
 
 module.exports = router
