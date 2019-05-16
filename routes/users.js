@@ -44,11 +44,29 @@ router.post('/register', (req, res) => {
       password2
     })
   } else {
-    User.create({
-      name,
-      email,
-      password
-    }).then(user => res.redirect('/'))
+    User.findOne({ where: { email: email } }).then(user => {
+      if (user) {
+        console.log('User already exists')
+        res.render('register', {
+          name,
+          email,
+          password,
+          password2
+        })
+      } else {
+        const newUser = new User({
+          name,
+          email,
+          password
+        })
+        newUser
+          .save()
+          .then(user => {
+            res.redirect('/') // 新增完成導回首頁
+          })
+          .catch(err => console.log(err))
+      }
+    })
   }
 })
 

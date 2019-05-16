@@ -5,9 +5,9 @@ const Todo = db.Todo
 const { authenticated } = require('../config/auth')
 
 router.get('/', authenticated, (req, res) => {
-  Todo.find({ userId: req.user._id })
+  Todo.findAll({ include: [User] })
     .sort({ name: 'asc' })
-    .exec((err, todos) => {
+    .then((err, todos) => {
       if (err) return console.error(err)
       return res.render('index', {
         todos: todos
