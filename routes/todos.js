@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const Todo = db.Todo
+const User = db.User
 const { authenticated } = require('../config/auth')
 
 // new todo page
@@ -11,41 +12,69 @@ router.get('/new', authenticated, (req, res) => {
 
 // new todo
 router.post('/', authenticated, (req, res) => {
-  const todo = Todo({
+  Todo.create({
     name: req.body.name,
-    userId: req.user._id
+    done: false,
+    UserId: req.user.id
   })
-
-  todo.save(err => {
-    if (err) return console.error(err)
-    return res.redirect('/')
-  })
+    .then(todo => {
+      return res.redirect('/')
+    })
+    .catch(err => {
+      return res.status(422).json(err)
+    })
 })
 
 // detail todo
 router.get('/:id', authenticated, (req, res) => {
-  Todo.findOne({ _id: req.params.id, userId: req.user._id }, (err, todo) => {
-    if (err) return console.error(err)
-    return res.render('detail', {
-      todo: todo
+  User.findByPk(req.user.id)
+    .then(user => {
+      if (!user) {
+        return res.error()
+      }
+      Todo.findOne({
+        where: {
+          UserId: req.user.id,
+          Id: req.params.id
+        }
+      }).then(todo => {
+        return res.render('detail', { todo })
+      })
     })
-  })
+    .catch(error => {
+      return res.status(422).json(error)
+    })
 })
 
 // edit todo page
 router.get('/:id/edit', authenticated, (req, res) => {
-  Todo.findOne({ _id: req.params.id, userId: req.user._id }, (err, todo) => {
-    if (err) return console.error(err)
-    return res.render('edit', {
-      todo: todo
+  User.findByPk(req.user.id)
+    .then(user => {
+      if (!user) {
+        return res.error()
+      }
+      Todo.findOne({
+        where: {
+          Id: req.params.id,
+          UserId: req.user.id
+        }
+      }).then(todo => {
+        return res.render('edit', { todo })
+      })
     })
-  })
+    .catch(error => {
+      return res.status(422).json(error)
+    })
 })
 
 // edit todo
 router.put('/:id', authenticated, (req, res) => {
-  Todo.findOne({ _id: req.params.id, userId: req.user._id }, (err, todo) => {
-    if (err) return console.error(err)
+  Todo.findOne({
+    where: {
+      Id: req.params.id,
+      UserId: req.user.id
+    }
+  }).then(todo => {
     todo.name = req.body.name
 
     if (req.body.done === 'on') {
@@ -54,22 +83,36 @@ router.put('/:id', authenticated, (req, res) => {
       todo.done = false
     }
 
-    todo.save(err => {
-      if (err) return console.error(err)
-      return res.redirect(`/todos/${req.params.id}`)
-    })
+    todo
+      .save()
+      .then(todo => {
+        return res.redirect(`/todos/${req.params.id}`)
+      })
+      .catch(err => {
+        return res.status(422).json(err)
+      })
   })
 })
 
 // delete todo
 router.delete('/:id/delete', authenticated, (req, res) => {
-  Todo.findOne({ _id: req.params.id, userId: req.user._id }, (err, todo) => {
-    if (err) return console.error(err)
-    todo.remove(err => {
-      if (err) return console.error(err)
-      return res.redirect('/')
+  User.findByPk(req.user.id)
+    .then(user => {
+      if (!user) {
+        return res.error()
+      }
+      Todo.destroy({
+        where: {
+          UserId: req.user.id,
+          Id: req.params.id
+        }
+      }).then(todo => {
+        return res.redirect('/')
+      })
     })
-  })
+    .catch(error => {
+      return res.status(422).json(error)
+    })
 })
 
 module.exports = router

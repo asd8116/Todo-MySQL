@@ -10,9 +10,9 @@ const app = express()
 const db = require('./models')
 
 // 判別開發環境
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config() // 使用 dotenv 讀取 .env 檔案
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   require('dotenv').config()
+// }
 
 Handlebars.registerHelper('switch', function(value, options) {
   this.switch_value = value

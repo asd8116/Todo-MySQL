@@ -2,16 +2,25 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const Todo = db.Todo
+const User = db.User
 const { authenticated } = require('../config/auth')
 
 router.get('/', authenticated, (req, res) => {
-  Todo.findAll({ include: [User] })
-    .sort({ name: 'asc' })
-    .then((err, todos) => {
-      if (err) return console.error(err)
-      return res.render('index', {
-        todos: todos
+  const user = User.findByPk(req.user.id)
+    .then(user => {
+      if (!user) {
+        return res.error()
+      }
+      Todo.findAll({
+        where: {
+          UserId: req.user.id
+        }
+      }).then(todos => {
+        return res.render('index', { todos: todos })
       })
+    })
+    .catch(error => {
+      return res.status(422).json(error)
     })
 })
 
