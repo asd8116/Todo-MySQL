@@ -29,17 +29,17 @@ router.post('/', authenticated, (req, res) => {
 router.get('/:id', authenticated, (req, res) => {
   User.findByPk(req.user.id)
     .then(user => {
-      if (!user) {
-        return res.error()
-      }
-      Todo.findOne({
+      if (!user) throw new Error('User not found')
+
+      return Todo.findOne({
         where: {
           UserId: req.user.id,
           Id: req.params.id
         }
-      }).then(todo => {
-        return res.render('detail', { todo })
       })
+    })
+    .then(todo => {
+      return res.render('detail', { todo })
     })
     .catch(error => {
       return res.status(422).json(error)
@@ -50,17 +50,17 @@ router.get('/:id', authenticated, (req, res) => {
 router.get('/:id/edit', authenticated, (req, res) => {
   User.findByPk(req.user.id)
     .then(user => {
-      if (!user) {
-        return res.error()
-      }
-      Todo.findOne({
+      if (!user) throw new Error('user not found')
+
+      return Todo.findOne({
         where: {
           Id: req.params.id,
           UserId: req.user.id
         }
-      }).then(todo => {
-        return res.render('edit', { todo })
       })
+    })
+    .then(todo => {
+      return res.render('edit', { todo })
     })
     .catch(error => {
       return res.status(422).json(error)
@@ -74,41 +74,36 @@ router.put('/:id', authenticated, (req, res) => {
       Id: req.params.id,
       UserId: req.user.id
     }
-  }).then(todo => {
-    todo.name = req.body.name
-
-    if (req.body.done === 'on') {
-      todo.done = true
-    } else {
-      todo.done = false
-    }
-
-    todo
-      .save()
-      .then(todo => {
-        return res.redirect(`/todos/${req.params.id}`)
-      })
-      .catch(err => {
-        return res.status(422).json(err)
-      })
   })
+    .then(todo => {
+      todo.name = req.body.name
+      todo.done = req.body.done === 'on'
+
+      return todo.save()
+    })
+    .then(todo => {
+      return res.redirect(`/todos/${req.params.id}`)
+    })
+    .catch(error => {
+      return res.status(422).json(err)
+    })
 })
 
 // delete todo
 router.delete('/:id/delete', authenticated, (req, res) => {
   User.findByPk(req.user.id)
     .then(user => {
-      if (!user) {
-        return res.error()
-      }
-      Todo.destroy({
+      if (!user) throw new Error('user not found')
+
+      return Todo.destroy({
         where: {
           UserId: req.user.id,
           Id: req.params.id
         }
-      }).then(todo => {
-        return res.redirect('/')
       })
+    })
+    .then(todo => {
+      return res.redirect('/')
     })
     .catch(error => {
       return res.status(422).json(error)
