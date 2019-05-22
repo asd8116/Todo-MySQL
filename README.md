@@ -29,6 +29,16 @@ git clone https://github.com/asd8116/TodoList1.0.git
 npm install
 ```
 
+在 [facebook for developers](https://developers.facebook.com/) 創建一個新的應用程式，取得編號 (App ID)和密鑰 (App Secret)
+
+開啟程式碼編輯器，在根目錄底下創建一個 `.env` 檔，輸入 ID 與 Secret
+
+```
+FACEBOOK_ID=******
+FACEBOOK_SECRET=******
+FACEBOOK_CALLBACK=http://localhost:3000/auth/facebook/callback
+```
+
 開啟本地伺服器。
 
 ```
